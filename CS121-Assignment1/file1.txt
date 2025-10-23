@@ -1,0 +1,13 @@
+The quick brown fox jumps over the lazy dog.
+Apple and banana are fruits.
+Python programming is fun!
+Numbers 123 and 456 are also tokens.
+Can't, Mama-tree
+Washington & hello all-the séntences
+Blue34-blue
+Banana, BANANA, banana
+mother-in-law's, co-operate
+café, Cafe, CAFE
+99bottles-99, bottles99
+user_name, user-name & & USERname
+
