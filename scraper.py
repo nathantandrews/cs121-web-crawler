@@ -1,4 +1,5 @@
 import re
+import requests
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
@@ -17,10 +18,28 @@ def extract_next_links(url, resp):
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
     # @TODO
-    if (resp.status != 200)
-        return list()
-    soup = BeautifulSoup(resp.raw_response.content, "lxml")
-    return list()
+    links = set()
+    try:
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, 'lxml')
+        for tag in soup.find_all(href=True):
+            href = tag.get('href') 
+            
+            if not href:
+                continue
+                
+            href = href.strip()
+            
+            if href.startswith('#') or href.lower().startswith('javascript:'):
+                continue
+                
+            links.add(href)
+            
+    except Exception as e:
+        print(f"lol broke: {e}")
+        return set()
+        
+    return links
 
 def is_valid(url):
     # Decide whether to crawl this url or not. 

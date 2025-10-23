@@ -105,3 +105,4 @@ env.bak/
 
 *.full.py
 *.shelve
+.venv/
