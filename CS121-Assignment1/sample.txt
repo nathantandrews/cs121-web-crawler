@@ -1,6 +1,0 @@
-The quick brown fox jumps over the lazy dog.
-The quick brown fox jumps over the lazy dog again!
-Apple, apple, aPpLe - all the same token.
-Numbers like 123 and 456 are also tokens.
-Special characters !@#$%^&*() don't break tokens.
-Multiple   spaces   between   words.

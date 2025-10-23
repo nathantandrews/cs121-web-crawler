@@ -1,7 +1,0 @@
-A lazy dog sleeps under the tree.
-Banana and orange are delicious fruits.
-Java programming is also fun!
-Numbers 789 and 123 appear here.
-The fox runs quickly.
-
-

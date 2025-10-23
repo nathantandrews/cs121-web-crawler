@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-# netid: abespejo
+# Alex's Assignment 1 Code rearranged to be one package.
 
 import sys
-from typing import List, Dict
+from typing import List, Dict, Set
 
 # O(N) where N is the number of tokens in the file
 def tokenize(text_file_path: str) -> List[str]:
@@ -40,15 +39,15 @@ def print_frequencies(frequencies: Dict[str, int]) -> None:
     for word, count in sorted_items:
         print(f"{word} = {count}")
 
-# O(N log N) = O(N log N) where N is the number of tokens in the file
-def main():
-    args = sys.argv[1:]
-    if not args:
-        sys.exit(1)
-    file_path = args[0]
-    tokenized = tokenize(file_path)
-    frequencies = compute_word_frequencies(tokenized)
-    print_frequencies(frequencies)
+# O(N) where the N is the number of unique tokens in both files 
+def get_tokens_set(text_file_path: str) -> Set[str]:
+    return set(tokenize(text_file_path))
 
-if __name__ == "__main__":
-    main()
+# O(M + N) where M and N are the number of unique tokens in file1 and file2 respectively
+def count_common_tokens(file1_path: str, file2_path: str) -> int:
+    tokens_file1 = get_tokens_set(file1_path)
+    tokens_file2 = get_tokens_set(file2_path)
+    
+    common_tokens = tokens_file1.intersection(tokens_file2)
+    
+    return len(common_tokens)
