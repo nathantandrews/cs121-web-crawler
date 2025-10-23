@@ -1,5 +1,6 @@
 import re
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -15,6 +16,10 @@ def extract_next_links(url, resp):
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
+    # @TODO
+    if (resp.status != 200)
+        return list()
+    soup = BeautifulSoup(resp.raw_response.content, "lxml")
     return list()
 
 def is_valid(url):
@@ -25,15 +30,26 @@ def is_valid(url):
         parsed = urlparse(url)
         if parsed.scheme not in set(["http", "https"]):
             return False
-        return not re.match(
-            r".*\.(css|js|bmp|gif|jpe?g|ico"
-            + r"|png|tiff?|mid|mp2|mp3|mp4"
-            + r"|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf"
-            + r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names"
-            + r"|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso"
-            + r"|epub|dll|cnf|tgz|sha1"
-            + r"|thmx|mso|arff|rtf|jar|csv"
-            + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$", parsed.path.lower())
+        default_invalid_re = r".*\.(css|js|bmp|gif|jpe?g|ico" \
+        + r"|png|tiff?|mid|mp2|mp3|mp4" \
+        + r"|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf" \
+        + r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names" \
+        + r"|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso" \
+        + r"|epub|dll|cnf|tgz|sha1" \
+        + r"|thmx|mso|arff|rtf|jar|csv" \
+        + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$"
+        
+        # @TODO define this ourselves / trial and error
+        # these are the allowed domain names
+        # *.ics.uci.edu/*
+        # *.cs.uci.edu/*  
+        # *.informatics.uci.edu/* 
+        # *.stat.uci.edu/*
+
+        valid_domains_re = r".*\.(ics\.uci\.edu|cs\.uci\.edu|informatics\.uci\.edu|stat\.uci\.edu)$"
+
+        return (not re.match(default_invalid_re, parsed.path.lower())) and \
+        re.match(valid_domains_re, parsed.path.lower())
 
     except TypeError:
         print ("TypeError for ", parsed)
