@@ -1,4 +1,5 @@
 import re
+import utils.token as token
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
@@ -17,7 +18,7 @@ def extract_next_links(url, resp):
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
     # @TODO
-    if (resp.status != 200)
+    if (resp.status != 200):
         return list()
     soup = BeautifulSoup(resp.raw_response.content, "lxml")
     return list()
