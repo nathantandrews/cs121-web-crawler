@@ -3,22 +3,17 @@
 import sys
 from typing import List, Dict, Set
 
-# O(N) where N is the number of tokens in the file
-def tokenize(text_file_path: str) -> List[str]:
+# O(N) where N is the number of tokens in the string
+def tokenize(text: str) -> List[str]:
     tokens: List[str] = []
     current: List[str] = []
-    with open(text_file_path, "r", encoding="utf-8", errors="replace") as f:
-        while True:
-            chunk = f.read(8192)
-            if not chunk:
-                break
-            for ch in chunk:
-                if ch.isascii() and (ch.isalpha() or ch.isdigit()):
-                    current.append(ch.lower())
-                else:
-                    if current:
-                        tokens.append("".join(current))
-                        current.clear()
+    for ch in text:
+        if ch.isascii() and (ch.isalpha() or ch.isdigit()):
+            current.append(ch.lower())
+        else:
+            if current:
+                tokens.append("".join(current))
+                current.clear()
     if current:
         tokens.append("".join(current))
     return tokens
