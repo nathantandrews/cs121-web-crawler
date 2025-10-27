@@ -1,12 +1,10 @@
 import re
-import requests
 import utils.token as token
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 
 def scraper(url, resp):
-    links = extract_next_links(url, resp)
-    return [link for link in links if is_valid(link)]
+    return extract_next_links(url, resp)
 
 def is_valid(url):
     # Decide whether to crawl this url or not. 
@@ -47,10 +45,9 @@ def extract_next_links(url, resp):
     # @TODO
     links = set()
     try:
-        res = requests.get(url)
-        soup = BeautifulSoup(res.text, 'lxml')
-        for tag in soup.find_all(href=True):
-            href = tag.get('href') 
+        soup = BeautifulSoup(resp.raw_response.text, 'lxml')
+        for tag in soup.find_all('a', href=True):
+            href = tag['href']
             
             if not href:
                 continue
@@ -66,8 +63,6 @@ def extract_next_links(url, resp):
         print(f"lol broke: {e}")
         return set()
         
-    for link in list(links):
-        if (not is_valid(link)):
-            links.remove(link)
+    links = {link for link in links if is_valid(link)}
 
     return set(links)
