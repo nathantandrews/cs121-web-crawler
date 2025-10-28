@@ -4,11 +4,13 @@ from urllib.parse import urlparse, urlunparse
 from collections import defaultdict
 
 class Report:
-    def __init__(self):
-        # key: url (discarding the fragment)
-        # value: number of words in the page (not unique)
-        self.pages_dict: dict[str, int] = dict()
-        self.lock = threading.lock()
+    _instance = None
+    def __new__(self):
+        if self._instance is None:
+            self._instance = super(Report, self).__new__(self)
+            self.pages_dict: dict[str, int] = dict()
+            self.lock = threading.lock()
+        return self._instance
 
     def add_page(self, url: str, word_count: int) -> None:
         """Adds a page to the pages dict

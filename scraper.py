@@ -1,7 +1,9 @@
 import re
-import utils.token as token
+import utils.token as tkn
+import utils.report as rprt
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
+
 
 def scraper(url, resp):
     return extract_next_links(url, resp)
