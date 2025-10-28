@@ -66,7 +66,9 @@ def extract_next_links(url, resp):
                 links.add(href)
             elif tag not in ['script', 'style', 'noscript', 'link', 'meta', 'nav', 'header', 'footer', 'aside', 'form', 'input', 'button', 'select', 'textarea', 'label', 'iframe', 'svg', 'canvas', 'template',]:
                 text = tag.get_text(text)
-                token.tokenize(text)
+                tokens = token.tokenize(text)
+                report = rprt.Report()
+                report.add_page(tokens, url)
             
     except Exception as e:
         print(f"lol broke: {e}")
