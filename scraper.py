@@ -1,7 +1,12 @@
 import re
-import utils.token as token
+import utils.token as tkn
+import utils.report as rprt
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
+
+INVALID_TAGS = {'script', 'style', 'noscript', 'link', \
+'meta', 'nav', 'header', 'footer', 'aside', 'form', 'input',\
+ 'button', 'select', 'textarea', 'label', 'iframe', 'svg', 'canvas', 'template'}
 
 def scraper(url, resp):
     if (resp and resp.raw_response):
@@ -47,31 +52,34 @@ def extract_next_links(url, resp):
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
-    # @TODO
     links = set()
     try:
-        if (resp and resp.raw_response):
-            soup = BeautifulSoup(resp.raw_response.text, 'lxml')
-            for tag in soup.find_all('a', href=True):
-                href = tag['href']
-                
-                if not href:
-                    continue
-                    
-                href = href.strip()
-                
-                if href.startswith('#') or href.lower().startswith('javascript:'):
-                    continue
-                    
+        if not resp or not hasattr(resp, "raw_response") or not \
+        resp.raw_response or not resp.raw_response.content or resp.status != 200:
+            return []
+        soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+        tokens = []
+        # find links
+        for a in soup.find_all('a', href=True):
+            href = a['href'].strip()
+            href = urljoin(url, href)
+            if is_valid(href):
                 links.add(href)
-            
-    except Exception as e:
-        print(f"lol broke: {e}")
-        return set()
-        
-    links = {link for link in links if is_valid(link)}
+        # get content
+        for tag in soup.find_all():
+            if tag.name not in INVALID_TAGS:
+                text = tag.get_text(strip=True)
+                if text:
+                    tokens.extend(tkn.tokenize(text))
+        # add to report
+        rprt.Report().add_page(url, tokens)
+        rprt.Report().print_report()
 
-    return set(links)
+    except Exception as e:
+        print(f"[extract_next_links] Error processing {url}: {type(e).__name__} - {e}")
+        return []
+
+    return list(links)
 
 def extract_visible_text(resp):
     soup = BeautifulSoup(resp.raw_response.content, 'lxml')
