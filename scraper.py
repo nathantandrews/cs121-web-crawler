@@ -36,6 +36,12 @@ def is_valid(url):
         # Fixed: (.*\.)? makes subdomain optional, matches both ics.uci.edu and www.ics.uci.edu
         valid_domains_re = r"^(.*\.)?(ics|cs|informatics|stat)\.uci\.edu$"
         
+        # Regex to check the parsed URL for calendar traps by analyzing dates in the path
+        if re.search(r'\d{4}[-/]\d{2}$', parsed.path): # check YYYY/MM or YYYY-MM pattern
+            return False
+        elif re.search(r'\d{4}[-/]\d{2}[-/]\d{2}$', parsed.path):  # check YYYY/MM/DD or YYYY-MM-DD pattern
+            return False
+
         return (not re.match(default_invalid_re, parsed.path.lower())) and \
         re.match(valid_domains_re, parsed.netloc.lower())
     except TypeError:
