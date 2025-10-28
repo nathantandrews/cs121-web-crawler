@@ -46,18 +46,25 @@ def extract_next_links(url, resp):
     links = set()
     try:
         soup = BeautifulSoup(resp.raw_response.text, 'lxml')
-        for tag in soup.find_all('a', href=True):
-            href = tag['href']
+
+
+        # start decomposition process:
+        for tag in soup.find_all():
+            if(tag == 'a'):
+                href = tag['href']
             
-            if not href:
-                continue
+                if not href:
+                    continue
+                    
+                href = href.strip()
                 
-            href = href.strip()
-            
-            if href.startswith('#') or href.lower().startswith('javascript:'):
-                continue
-                
-            links.add(href)
+                if href.startswith('#') or href.lower().startswith('javascript:'):
+                    continue
+                    
+                links.add(href)
+            elif tag not in ['script', 'style', 'noscript', 'link', 'meta', 'nav', 'header', 'footer', 'aside', 'form', 'input', 'button', 'select', 'textarea', 'label', 'iframe', 'svg', 'canvas', 'template',]:
+                text = tag.get_text(text)
+                token.tokenize(text)
             
     except Exception as e:
         print(f"lol broke: {e}")
