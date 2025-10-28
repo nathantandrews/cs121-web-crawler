@@ -4,6 +4,9 @@ import utils.report as rprt
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 
+INVALID_TAGS = ['script', 'style', 'noscript', 'link', \
+'meta', 'nav', 'header', 'footer', 'aside', 'form', 'input',\
+ 'button', 'select', 'textarea', 'label', 'iframe', 'svg', 'canvas', 'template',]
 
 def scraper(url, resp):
     return extract_next_links(url, resp)
@@ -64,7 +67,7 @@ def extract_next_links(url, resp):
                     continue
                     
                 links.add(href)
-            elif tag not in ['script', 'style', 'noscript', 'link', 'meta', 'nav', 'header', 'footer', 'aside', 'form', 'input', 'button', 'select', 'textarea', 'label', 'iframe', 'svg', 'canvas', 'template',]:
+            elif tag not in INVALID_TAGS:
                 text = tag.get_text(text)
                 tokens = token.tokenize(text)
                 report = rprt.Report()
