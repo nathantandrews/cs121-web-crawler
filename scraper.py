@@ -4,6 +4,11 @@ from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 
 def scraper(url, resp):
+    if (resp and resp.raw_response):
+        text = count_50(resp)
+        print(tokens)
+    else:
+        print("bad", resp)
     return extract_next_links(url, resp)
 
 def is_valid(url):
@@ -67,3 +72,16 @@ def extract_next_links(url, resp):
     links = {link for link in links if is_valid(link)}
 
     return set(links)
+
+def extract_visible_text(resp):
+    soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+    for script in soup(["script", "style"]):
+        script.decompose()
+    visible_text = soup.get_text(separator=" ", strip=True)
+    return re.sub(r'\s+', ' ', visible_text)
+
+def count_50(resp):
+    text = extract_visible_text(resp)
+    tokens = token.get_tokens_set(text) 
+    return text
+    
