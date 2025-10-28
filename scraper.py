@@ -45,19 +45,20 @@ def extract_next_links(url, resp):
     # @TODO
     links = set()
     try:
-        soup = BeautifulSoup(resp.raw_response.text, 'lxml')
-        for tag in soup.find_all('a', href=True):
-            href = tag['href']
-            
-            if not href:
-                continue
+        if (resp and resp.raw_response):
+            soup = BeautifulSoup(resp.raw_response.text, 'lxml')
+            for tag in soup.find_all('a', href=True):
+                href = tag['href']
                 
-            href = href.strip()
-            
-            if href.startswith('#') or href.lower().startswith('javascript:'):
-                continue
+                if not href:
+                    continue
+                    
+                href = href.strip()
                 
-            links.add(href)
+                if href.startswith('#') or href.lower().startswith('javascript:'):
+                    continue
+                    
+                links.add(href)
             
     except Exception as e:
         print(f"lol broke: {e}")
