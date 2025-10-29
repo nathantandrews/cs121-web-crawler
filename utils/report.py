@@ -44,10 +44,10 @@ class Report:
             url = max(self.pgs_tcount_dict, key=self.pgs_tcount_dict.get)
             return (url, self.pgs_tcount_dict[url])
     
-    def get_most_common_words(self, quantity: int) -> dict[str, int]:
+    def get_most_common_words(self, quantity: int) -> list[tuple[str, int]]:
         """Tallies up the most common words."""
         with self.lock:
-            self.token_counter.most_common(quantity)
+            return self.token_counter.most_common(quantity)
     
     def get_subdomain_count(self) -> dict[str, int]:
         """Counts unique pages per subdomain."""
@@ -76,8 +76,8 @@ class Report:
                 f.write(f"{longest_url} ({longest_len} tokens)\n")
 
             with open("report/most_common_words.txt", "w") as f:
-                for word, count in self.get_most_common_words(MOST_COMMON_QUANTITY).items():
-                    f.write(f"{word}: {count}\n")
+                for word_count_tup in self.get_most_common_words(MOST_COMMON_QUANTITY):
+                    f.write(f"{word_count_tup[0]}: {word_count_tup[1]}\n")
 
             with open("report/subdomain_count.txt", "w") as f:
                 subdomains = self.get_subdomain_count()
