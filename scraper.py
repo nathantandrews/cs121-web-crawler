@@ -9,11 +9,6 @@ INVALID_TAGS = {'script', 'style', 'noscript', 'link', \
  'button', 'select', 'textarea', 'label', 'iframe', 'svg', 'canvas', 'template'}
 
 def scraper(url, resp):
-    if (resp and resp.raw_response):
-        text = count_50(resp)
-        print(tokens)
-    else:
-        print("bad", resp)
     return extract_next_links(url, resp)
 
 def is_valid(url):
@@ -40,6 +35,28 @@ def is_valid(url):
         if re.search(r'\d{4}[-/]\d{2}$', parsed.path): # check YYYY/MM or YYYY-MM pattern
             return False
         elif re.search(r'\d{4}[-/]\d{2}[-/]\d{2}$', parsed.path):  # check YYYY/MM/DD or YYYY-MM-DD pattern
+            return False
+
+        # Media file
+        pattern = r"(do=media|tab_files=(files|search|upload)|tab_details=(history|view)|image=)"
+        if re.search(pattern, url):
+            print("media upload files image")
+            return False
+
+        # edit file 
+        pattern = r".*(\?do=edit|\?do=diff|\?rev=|\?rev2%5B).*"
+        if re.search(pattern, url):
+            print("misc")
+            return False
+
+        # no repeated directiories
+        if re.match(r"^.*?(/.+?/).*?\1.*$|^.*?/(.+?/)\2.*$", parsed.path):
+            print("no repeated directories")
+            return False
+
+        # extra directories in url - for wikis etc.
+        if re.match("^.*(/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme){3}.*$", parsed.path):
+            print("wiki found")
             return False
 
         return (not re.match(default_invalid_re, parsed.path.lower())) and \
