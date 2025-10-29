@@ -96,6 +96,6 @@ def extract_visible_text(resp):
 
 def count_50(resp):
     text = extract_visible_text(resp)
-    tokens = token.get_tokens_set(text) 
+    tokens = tkn.get_tokens_set(text)
     return text
     
