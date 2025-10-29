@@ -1,18 +1,23 @@
 import utils.token as tkn
-import utils.stopwords as stp
+import utils.constants as const
 
 import os
 import threading
 import tldextract
 from urllib.parse import urlparse, urlunparse
-from collections import defaultdict
+from collections import defaultdict, Counter
+
+MOST_COMMON_QUANTITY = 50
 
 class Report:
+    pgs_tcount_dict: dict
+    token_counter: Counter
+    lock: threading.Lock
     def __new__(cls):
         if not hasattr(cls, '_instance'):
             cls._instance = super(Report, cls).__new__(cls)
-            cls._instance.pages_dict = dict()
-            cls._instance.tokens = list()
+            cls._instance.pgs_tcount_dict = dict()
+            cls._instance.token_counter = Counter()
             cls._instance.lock = threading.Lock()
         return cls._instance
 
@@ -25,40 +30,36 @@ class Report:
         with self.lock:
             modified_parsed_url = urlparse(url)._replace(fragment="")
             url_no_fragment = urlunparse(modified_parsed_url)
-            self.tokens.extend(tokens)
-            self.pages_dict[url_no_fragment] = len(tokens)
+            self.pgs_tcount_dict[url_no_fragment] = len(tokens)
+            self.token_counter.update(filter(lambda x: x not in const.STOP_WORDS, tokens))
     
     def get_unique_pages(self) -> int:
         """Retrieves a set of unique visited pages."""
         with self.lock:
-            return len(self.pages_dict)
+            return len(self.pgs_tcount_dict)
     
     def get_longest_page(self) -> str:
         """Compares all visited pages and determines the longest page."""
         with self.lock:
-            url = max(self.pages_dict, key=self.pages_dict.get)
-            return (url, self.pages_dict[url])
+            url = max(self.pgs_tcount_dict, key=self.pgs_tcount_dict.get)
+            return (url, self.pgs_tcount_dict[url])
     
     def get_most_common_words(self, quantity: int) -> dict[str, int]:
+        """Tallies up the most common words."""
         with self.lock:
-            frequencies = tkn.compute_word_frequencies(self.tokens)
-            sorted_items = sorted(frequencies.items(), key=lambda x: x[1], reverse=True)
-            non_stop_words = dict()
-            for word, count in sorted_items:
-                if word in stp.STOP_WORDS:
-                    continue
-                non_stop_words[word] = count
-                if len(non_stop_words) == quantity:
-                    break
-            return non_stop_words
+            self.token_counter.most_common(quantity)
+    
     def get_subdomain_count(self) -> dict[str, int]:
         """Counts unique pages per subdomain."""
         with self.lock:
             subdomain_dict = defaultdict(int)
-            for page in self.pages_dict.keys():
+            for page in self.pgs_tcount_dict.keys():
                 extracted_url = tldextract.extract(page)
                 # Combine subdomain + domain to get a full identifier
-                full_domain = ".".join(part for part in [extracted_url.subdomain, extracted_url.domain, extracted_url.suffix] if part)
+                full_domain = ".".join(part for part in \
+                                       [extracted_url.subdomain, \
+                                        extracted_url.domain, \
+                                            extracted_url.suffix] if part)
                 subdomain_dict[full_domain] += 1
             return dict(subdomain_dict)
 
@@ -75,7 +76,7 @@ class Report:
                 f.write(f"{longest_url} ({longest_len} tokens)\n")
 
             with open("report/most_common_words.txt", "w") as f:
-                for word, count in self.get_most_common_words(50).items():
+                for word, count in self.get_most_common_words(MOST_COMMON_QUANTITY).items():
                     f.write(f"{word}: {count}\n")
 
             with open("report/subdomain_count.txt", "w") as f:
