@@ -43,3 +43,11 @@ CALENDAR_TRAP_REGEX = (
     r"ical=\d+|"
     r"(?:next|prev)(?:_|-)?(?:month|year|day))"
 )
+
+WIKI_TRAP_RE = r"^.*(/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme){3}.*$"
+
+REPEATED_DIR_TRAP_RE = r"^.*?(/.+?/).*?\1.*$|^.*?/(.+?/)\2.*$"
+
+EDIT_FILE_TRAP_RE = r".*(\?do=edit|\?do=diff|\?rev=|\?rev2%5B).*"
+
+MEDIA_FILE_TRAP_RE= r"(do=media|tab_files=(files|search|upload)|tab_details=(history|view)|image=)"
