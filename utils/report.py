@@ -44,13 +44,9 @@ class Report:
             frequencies = tkn.compute_word_frequencies(self.tokens)
             sorted_items = sorted(frequencies.items(), key=lambda x: x[1], reverse=True)
             non_stop_words = dict()
-            for word, count in sorted_items:
-                if word in stp.STOP_WORDS:
-                    continue
-                non_stop_words[word] = count
-                if len(non_stop_words) == quantity:
-                    break
-            return non_stop_words
+
+            return frequencies 
+            
     def get_subdomain_count(self) -> dict[str, int]:
         """Counts unique pages per subdomain."""
         with self.lock:

@@ -2,6 +2,7 @@
 
 import sys
 from typing import List, Dict, Set
+from utils.stopwords import STOP_WORDS
 
 # O(N) where N is the number of tokens in the string
 def tokenize(text: str) -> List[str]:
@@ -22,10 +23,11 @@ def tokenize(text: str) -> List[str]:
 def compute_word_frequencies(tokens: List[str]) -> Dict[str, int]:
     res = {}
     for token in tokens:
-        if token in res:
-            res[token] += 1
-        else:
-            res[token] = 1
+        if (token not in STOP_WORDS):
+            if token in res:
+                res[token] += 1
+            else:
+                res[token] = 1
     return res
 
 # O(N log N + N) The time to sort the items + the time to print them
