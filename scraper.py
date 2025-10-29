@@ -37,9 +37,8 @@ def is_valid(url):
         valid_domains_re = r"^(.*\.)?(ics|cs|informatics|stat)\.uci\.edu$"
         
         # Regex to check the parsed URL for calendar traps by analyzing dates in the path
-        if re.search(r'\d{4}[-/]\d{2}$', parsed.path): # check YYYY/MM or YYYY-MM pattern
-            return False
-        elif re.search(r'\d{4}[-/]\d{2}[-/]\d{2}$', parsed.path):  # check YYYY/MM/DD or YYYY-MM-DD pattern
+        CALENDAR_TRAP_REGEX = r'(?:\d{4}[-/]\d{1,2}[-/]\d{1,2}|\d{4}[-/]\d{1,2}|(?:date|month|year|calendar|event)[-_]?\w*=\d+|tribe[-_]bar[-_]date|ical=\d+|(?:next|prev)(?:_|-)?(?:month|year|day))'
+        if re.search(CALENDAR_TRAP_REGEX, parsed.query): # check YYYY/MM or YYYY-MM pattern
             return False
 
         return (not re.match(default_invalid_re, parsed.path.lower())) and \
