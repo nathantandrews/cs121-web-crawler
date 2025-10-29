@@ -1,13 +1,14 @@
 import utils.token as tkn
 import utils.report as rprt
 import utils.constants as const
+import utils.log as log
 
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin, ParseResult
 from bs4 import BeautifulSoup
 import re
-import logging
 
-logger = logging.getLogger(__name__)
+LOG_DIR = "Logs"
+logger = log.setup_logger(LOG_DIR)
 
 def scraper(url, resp):
     if not is_resp_valid(resp):
@@ -16,7 +17,7 @@ def scraper(url, resp):
 
 def is_valid(url):
     try:
-        parsed_url = urlparse(url)
+        parsed_url: ParseResult = urlparse(url)
 
         # check http / https (default)
         # check basic extensions (default)
