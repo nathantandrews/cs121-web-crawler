@@ -4,18 +4,25 @@ import time
 
 from utils.response import Response
 
+# STUDENT MADE # ADDED TIMEOUT
+ESTABLISH_CONNECTION_TIMEOUT = 2 # in seconds
+DOWNLOAD_TIMEOUT = 10 # in seconds
+TIMEOUT = tuple([ESTABLISH_CONNECTION_TIMEOUT, DOWNLOAD_TIMEOUT])
+
 def download(url, config, logger=None):
     host, port = config.cache_server
-    resp = requests.get(
-        f"http://{host}:{port}/",
-        params=[("q", f"{url}"), ("u", f"{config.user_agent}")])
+    resp = Response({"url" : "", "status" : ""})
     try:
+        resp = requests.get(
+            f"http://{host}:{port}/",
+            params=[("q", f"{url}"), ("u", f"{config.user_agent}")], timeout=TIMEOUT) # STUDENT MADE # ADDED TIMEOUT
         if resp and resp.content:
             return Response(cbor.loads(resp.content))
-    except (EOFError, ValueError) as e:
-        pass
-    logger.error(f"Spacetime Response error {resp} with url {url}.")
-    return Response({
-        "error": f"Spacetime Response error {resp} with url {url}.",
-        "status": resp.status_code,
-        "url": url})
+        else:
+            return Response({"url" : "", "status" : ""})
+    except (EOFError, ValueError, requests.exceptions.RequestException) as e:
+        logger.error(f"Spacetime Response error {resp} with url {url}. Exception: {e}")
+        return Response({
+            "error": f"Spacetime Response error {resp} with url {url}.",
+            "status": resp.status,
+            "url": url})

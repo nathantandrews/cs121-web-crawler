@@ -13,3 +13,33 @@ STOP_WORDS = {
     "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't",
     "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"
 }
+
+INVALID_TAGS = {
+    'script', 'style', 'noscript', 'link', 'meta', 
+    'nav', 'header', 'footer', 'aside', 'form', 
+    'input', 'button', 'select', 'textarea', 
+    'label', 'iframe', 'svg', 'canvas', 'template',
+    'object', 'embed', 'applet', 'picture', 'source'
+}
+
+DEFAULT_INVALID_RE = r".*\.(php|css|js|bmp|gif|jpe?g|ico" \
++ r"|png|tiff?|mid|mp2|mp3|mp4" \
++ r"|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf" \
++ r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names" \
++ r"|data|dat|exe|bz2|tar|msi|bin|7z|psd|dmg|iso" \
++ r"|epub|dll|cnf|tgz|sha1" \
++ r"|thmx|mso|arff|rtf|jar|csv" \
++ r"|rm|smil|wmv|swf|wma|zip|rar|gz)$"
+
+# Fixed: (.*\.)? makes subdomain optional, matches both ics.uci.edu and www.ics.uci.edu
+VALID_DOMAINS_RE = r"^(.*\.)?(ics|cs|informatics|stat)\.uci\.edu$"
+
+# Regex to check the parsed URL for calendar traps by analyzing dates in the path
+CALENDAR_TRAP_REGEX = (
+    r"(?:\d{4}[-/]\d{1,2}[-/]\d{1,2}|"
+    r"\d{4}[-/]\d{1,2}|"
+    r"(?:date|month|year|calendar|event)[-_]?\w*=\d+|"
+    r"tribe[-_]bar[-_]date|"
+    r"ical=\d+|"
+    r"(?:next|prev)(?:_|-)?(?:month|year|day))"
+)
