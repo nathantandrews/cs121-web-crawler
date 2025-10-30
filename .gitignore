@@ -107,3 +107,5 @@ venv/
 *.full.py
 *.shelve
 .venv/
+*.db
+Logs/_report
