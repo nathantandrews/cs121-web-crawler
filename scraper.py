@@ -28,30 +28,55 @@ def is_resp_valid(resp) -> bool:
     )
 
 def scrape_page(url: str, resp) -> tuple[set[str], list[str]]:
-    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(resp.raw_response.content, 'lxml')
+    soup: bs4.BeautifulSoup = bs4.BeautifulSoup(resp.raw_response.content.decode('utf-8', errors='ignore'), 'lxml')
     soup.url = url
     links: list[str] = extract_next_links(soup)
     tokens = get_content(soup)
     return links, tokens
 
-def is_valid(url: str) -> bool:
+def is_valid(url):
+    # Decide whether to crawl this url or not. 
+    # If you decide to crawl it, return True; otherwise return False.
+    # There are already some conditions that return False.
     try:
-        parsed_url: urlprs.ParseResult = urlprs.urlparse(url)
-        path = parsed_url.path.lower()
-        return (
-            parsed_url.scheme in set(["http", "https"])
-            and re.match(const.VALID_DOMAINS_RE, parsed_url.netloc.lower())
-            and not re.match(const.DEFAULT_INVALID_RE, path)
-            
-            and not re.search(const.CALENDAR_TRAP_REGEX, parsed_url.query)
-            and not re.search(const.WIKI_TRAP_RE, path)
-            and not re.search(const.REPEATED_DIR_TRAP_RE, path)
-            and not re.search(const.EDIT_FILE_TRAP_RE, path)
-            and not re.search(const.MEDIA_FILE_TRAP_RE, path)
-        )
-    except Exception as e:
-        logger.error(f"[is_valid] Error determining validity of {url}: {type(e).__name__} - {e}")
-        return False
+        parsed = urlprs.urlparse(url)
+        if parsed.scheme not in set(["http", "https"]):
+            return False
+        
+        allowed_domains = {".ics.uci.edu", ".cs.uci.edu", ".informatics.uci.edu", ".stat.uci.edu"}
+
+        blocked_keywords = {
+            "accounts",
+            "home_directory",
+            "calendar",
+            "doku.php",  
+            "tab_files", 
+            "do=media", 
+        }
+
+       
+        if (
+            not any(parsed.netloc.endswith(domain) for domain in allowed_domains)
+            or any(keyword in url for keyword in blocked_keywords)
+            or re.search(const.NGS_R, parsed.netloc.lower())
+            or re.search(const.GRAPE_R, parsed.netloc.lower())
+            or re.search(const.MONTH_YEAR_R, parsed.path)
+            or re.search(const.MSE_R, parsed.netloc.lower())
+            or (re.search(const.ISG_R, parsed.netloc.lower()) and re.search(const.MONTH_YEAR_R, parsed.path))
+            or re.search(const.TRIBE_BAR_R, parsed.query)
+            or (re.search(const.ISG_ICS, parsed.netloc.lower()) and re.search(const.SOMETHING_SOMETHING_R, parsed.path))
+            or re.search(const.IDK_20_R, parsed.path)
+            or re.search(const.IDK_THIS_CAUSE_ERROR, parsed.path)
+            or re.search(const.PAGNATION_R, parsed.netloc.lower() + parsed.path.lower() + parsed.query.lower())
+        ):
+            return False
+
+    
+        return not re.match(const.DEFAULT_INVALID_RE, parsed.path.lower())
+
+    except TypeError:
+        print ("TypeError for ", parsed)
+        raise
 
 def extract_next_links(soup: bs4.BeautifulSoup) -> list[str]:
     links = set()

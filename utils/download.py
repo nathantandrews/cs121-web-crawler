@@ -6,7 +6,7 @@ from utils.response import Response
 
 # STUDENT MADE # ADDED TIMEOUT
 ESTABLISH_CONNECTION_TIMEOUT = 5 # in seconds
-DOWNLOAD_TIMEOUT = 15 # in seconds
+DOWNLOAD_TIMEOUT = 6 # in seconds
 TIMEOUT = tuple([ESTABLISH_CONNECTION_TIMEOUT, DOWNLOAD_TIMEOUT])
 
 def download(url, config, logger=None):
@@ -15,7 +15,7 @@ def download(url, config, logger=None):
     try:
         resp = requests.get(
             f"http://{host}:{port}/",
-            params=[("q", f"{url}"), ("u", f"{config.user_agent}")], timeout=TIMEOUT) # STUDENT MADE # ADDED TIMEOUT
+            params=[("q", f"{url}"), ("u", f"{config.user_agent}")], timeout=6) # STUDENT MADE # ADDED TIMEOUT
         if resp and resp.content:
             return Response(cbor.loads(resp.content))
         else:

@@ -34,20 +34,21 @@ DEFAULT_INVALID_RE = r".*\.(php|css|js|bmp|gif|jpe?g|ico" \
 # Fixed: (.*\.)? makes subdomain optional, matches both ics.uci.edu and www.ics.uci.edu
 VALID_DOMAINS_RE = r"^(.*\.)?(ics|cs|informatics|stat)\.uci\.edu$"
 
-# Regex to check the parsed URL for calendar traps by analyzing dates in the path
-CALENDAR_TRAP_REGEX = (
-    r"(?:\d{4}[-/]\d{1,2}[-/]\d{1,2}|"
-    r"\d{4}[-/]\d{1,2}|"
-    r"(?:date|month|year|calendar|event)[-_]?\w*=\d+|"
-    r"tribe[-_]bar[-_]date|"
-    r"ical=\d+|"
-    r"(?:next|prev)(?:_|-)?(?:month|year|day))"
-)
-
-WIKI_TRAP_RE = r"(?:/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme).*?(?:/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme).*?(?:/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme)"
-
-REPEATED_DIR_TRAP_RE = r"/([^/]+)/(?:.*/)?\1/"
-
-EDIT_FILE_TRAP_RE = r"[?&](do=(edit|diff)|rev=|rev2%5B)"
-
-MEDIA_FILE_TRAP_RE = r"[?&](do=media|tab_files=(files|search|upload)|tab_details=(history|view)|image=)"
+# blocks ngs -> low value information
+# blocks grape -> low value information
+# blocks any site with MMMM-YY because indicates calendar
+# blocks mse because causes error and not accessible thru browser
+# blocks isg with MMMM-YY becausei ndicates calendar
+# blocks %20 because causes error 
+# blocks calendar, accounts, filter, php, id query, date query, page query because crawler traps
+NGS_R = r"(ngs\.)"
+GRAPE_R = r"(grape\.ics\.uci\.edu)"
+MONTH_YEAR_R = r"/\d{4}/\d{2}/$"
+MSE_R = r"(mse\.)"
+ISG_R = r"(isg\.)"
+TRIBE_BAR_R = r"tribe-bar-date=\d{4}-\d{2}-\d{2}"
+ISG_ICS = r"isg\.ics\.uci\.edu"
+IDK_20_R = r"%20$"
+SOMETHING_SOMETHING_R = r"/\d{4}-\d{2}-\d{2}/"
+IDK_THIS_CAUSE_ERROR = r"\s+$"
+PAGNATION_R = r"(calendar|accounts|filter=|php|\?id=|date=|page=)"
