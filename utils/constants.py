@@ -44,10 +44,10 @@ CALENDAR_TRAP_REGEX = (
     r"(?:next|prev)(?:_|-)?(?:month|year|day))"
 )
 
-WIKI_TRAP_RE = r"^.*(/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme){3}.*$"
+WIKI_TRAP_RE = r"(?:/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme).*?(?:/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme).*?(?:/misc|/sites|/all|/themes|/modules|/profiles|/css|/field|/node|/theme)"
 
-REPEATED_DIR_TRAP_RE = r"^.*?(/.+?/).*?\1.*$|^.*?/(.+?/)\2.*$"
+REPEATED_DIR_TRAP_RE = r"/([^/]+)/(?:.*/)?\1/"
 
-EDIT_FILE_TRAP_RE = r".*(\?do=edit|\?do=diff|\?rev=|\?rev2%5B).*"
+EDIT_FILE_TRAP_RE = r"[?&](do=(edit|diff)|rev=|rev2%5B)"
 
-MEDIA_FILE_TRAP_RE= r"(do=media|tab_files=(files|search|upload)|tab_details=(history|view)|image=)"
+MEDIA_FILE_TRAP_RE = r"[?&](do=media|tab_files=(files|search|upload)|tab_details=(history|view)|image=)"

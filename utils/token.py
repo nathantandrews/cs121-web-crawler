@@ -2,7 +2,7 @@
 
 import sys
 from typing import List, Dict, Set
-from utils.stopwords import STOP_WORDS
+from utils.constants import STOP_WORDS
 
 # O(N) where N is the number of tokens in the string
 def tokenize(text: str) -> List[str]:

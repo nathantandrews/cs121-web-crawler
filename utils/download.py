@@ -5,8 +5,8 @@ import time
 from utils.response import Response
 
 # STUDENT MADE # ADDED TIMEOUT
-ESTABLISH_CONNECTION_TIMEOUT = 2 # in seconds
-DOWNLOAD_TIMEOUT = 10 # in seconds
+ESTABLISH_CONNECTION_TIMEOUT = 5 # in seconds
+DOWNLOAD_TIMEOUT = 15 # in seconds
 TIMEOUT = tuple([ESTABLISH_CONNECTION_TIMEOUT, DOWNLOAD_TIMEOUT])
 
 def download(url, config, logger=None):

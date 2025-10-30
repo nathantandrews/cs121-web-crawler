@@ -7,7 +7,7 @@ import tldextract
 from urllib.parse import urlparse, urlunparse
 from collections import defaultdict, Counter
 
-MOST_COMMON_QUANTITY = 50
+MOST_COMMON_COUNT = 50
 
 class Report:
     pgs_tcount_dict: dict
@@ -33,10 +33,10 @@ class Report:
             self.pgs_tcount_dict[url_no_fragment] = len(tokens)
             self.token_counter.update(filter(lambda x: x not in const.STOP_WORDS, tokens))
     
-    def get_unique_pages(self) -> int:
+    def get_unique_pages(self) -> set[str]:
         """Retrieves a set of unique visited pages."""
         with self.lock:
-            return len(self.pgs_tcount_dict)
+            return set(self.pgs_tcount_dict.keys())
     
     def get_longest_page(self) -> str:
         """Compares all visited pages and determines the longest page."""
@@ -66,21 +66,26 @@ class Report:
     
     def print_report(self):
         """Writes crawler report."""
-        os.makedirs("report", exist_ok=True)
+        os.makedirs("Logs/_report", exist_ok=True)
         try:
-            with open("report/unique_pages.txt", "w") as f:
-                f.write(f"{self.get_unique_pages()}\n")
+            with open("Logs/_report/unique_pages.txt", "w") as f:
+                unique_pages = self.get_unique_pages()
+                f.write(f"unique pagecount: {len(unique_pages)}\n")
+                for page in unique_pages:
+                    f.write(f"{page}\n")
 
             longest_url, longest_len = self.get_longest_page()
-            with open("report/longest_page.txt", "w") as f:
-                f.write(f"{longest_url} ({longest_len} tokens)\n")
+            with open("Logs/_report/longest_page.txt", "w") as f:
+                f.write(f"The longest page's url: {longest_url} ({longest_len} tokens)\n")
 
-            with open("report/most_common_words.txt", "w") as f:
-                for word_count_tup in self.get_most_common_words(MOST_COMMON_QUANTITY):
+            with open("Logs/_report/most_common_words.txt", "w") as f:
+                f.write(f"Top {MOST_COMMON_COUNT} Words:\n")
+                for word_count_tup in self.get_most_common_words(MOST_COMMON_COUNT):
                     f.write(f"{word_count_tup[0]}: {word_count_tup[1]}\n")
 
-            with open("report/subdomain_count.txt", "w") as f:
+            with open("Logs/_report/subdomain_count.txt", "w") as f:
                 subdomains = self.get_subdomain_count()
+                f.write(f"Subdomains and the amount of pages in each subdomain:\n")
                 for sub, count in sorted(subdomains.items()):
                     f.write(f"{sub}, {count}\n")
 
