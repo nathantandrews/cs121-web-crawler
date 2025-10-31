@@ -41,13 +41,17 @@ def is_valid(url: str) -> bool:
         return (
             parsed_url.scheme in set(["http", "https"])
             and re.match(const.VALID_DOMAINS_RE, parsed_url.netloc.lower())
-            and not re.match(const.DEFAULT_INVALID_RE, path)
-            
+            and not re.match(const.DEFAULT_INVALID_EXTENSIONS_RE, path)
+            and not re.match(const.INVALID_EXTENSIONS_RE, path)
             and not re.search(const.CALENDAR_TRAP_REGEX, parsed_url.query)
             and not re.search(const.WIKI_TRAP_RE, path)
             and not re.search(const.REPEATED_DIR_TRAP_RE, path)
             and not re.search(const.EDIT_FILE_TRAP_RE, path)
             and not re.search(const.MEDIA_FILE_TRAP_RE, path)
+            and not re.search(const.EPPSTEIN_PIX_RE, path)
+            and not re.search(const.EVENTS_RE, path)
+            and not re.search(const.NGS_RE, parsed_url.hostname)
+            and not re.search(const.DOKU_RE, parsed_url.path)
         )
     except Exception as e:
         logger.error(f"[is_valid] Error determining validity of {url}: {type(e).__name__} - {e}")

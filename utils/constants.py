@@ -1,3 +1,5 @@
+import re
+
 STOP_WORDS = {
     "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
     "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could",
@@ -22,7 +24,7 @@ INVALID_TAGS = {
     'object', 'embed', 'applet', 'picture', 'source'
 }
 
-DEFAULT_INVALID_RE = r".*\.(php|css|js|bmp|gif|jpe?g|ico" \
+DEFAULT_INVALID_EXTENSIONS_RE = r".*\.(php|css|js|bmp|gif|jpe?g|ico" \
 + r"|png|tiff?|mid|mp2|mp3|mp4" \
 + r"|wav|avi|mov|mpeg|ram|m4v|mkv|ogg|ogv|pdf" \
 + r"|ps|eps|tex|ppt|pptx|doc|docx|xls|xlsx|names" \
@@ -31,6 +33,14 @@ DEFAULT_INVALID_RE = r".*\.(php|css|js|bmp|gif|jpe?g|ico" \
 + r"|thmx|mso|arff|rtf|jar|csv" \
 + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$"
 
+INVALID_EXTENSIONS_RE = re.compile(
+    r".*\.(apk|exe|bin|msi|dmg|iso|tar|gz|bz2|7z|zip|rar|"
+    r"jpg|jpeg|png|gif|bmp|tiff?|svg|ico|mp3|mp4|m4a|m4v|wav|ogg|oga|flac|"
+    r"avi|mov|wmv|mkv|mpeg|mpg|webm|pdf|ps|eps|doc|docx|ppt|pptx|xls|xlsx|"
+    r"csv|rtf|tex|epub|jar|class|pyc|dll|so|swf|odc|ods|odt|odp|icns|dat|sav|tmp|ppsx)$",
+    re.IGNORECASE
+)
+
 # Fixed: (.*\.)? makes subdomain optional, matches both ics.uci.edu and www.ics.uci.edu
 VALID_DOMAINS_RE = r"^(.*\.)?(ics|cs|informatics|stat)\.uci\.edu$"
 
@@ -38,7 +48,7 @@ VALID_DOMAINS_RE = r"^(.*\.)?(ics|cs|informatics|stat)\.uci\.edu$"
 CALENDAR_TRAP_REGEX = (
     r"(?:\d{4}[-/]\d{1,2}[-/]\d{1,2}|"
     r"\d{4}[-/]\d{1,2}|"
-    r"(?:date|month|year|calendar|event)[-_]?\w*=\d+|"
+    r"(?:date|month|year|calendar|event|week)[-_]?\w*=\d+|"
     r"tribe[-_]bar[-_]date|"
     r"ical=\d+|"
     r"(?:next|prev)(?:_|-)?(?:month|year|day))"
@@ -51,3 +61,11 @@ REPEATED_DIR_TRAP_RE = r"/([^/]+)/(?:.*/)?\1/"
 EDIT_FILE_TRAP_RE = r"[?&](do=(edit|diff)|rev=|rev2%5B)"
 
 MEDIA_FILE_TRAP_RE = r"[?&](do=media|tab_files=(files|search|upload)|tab_details=(history|view)|image=)"
+
+EPPSTEIN_PIX_RE = r"/~eppstein/pix/"
+
+EVENTS_RE = r"/events/"
+
+NGS_RE = r"//ngs.ics.uci.edu/"
+
+DOKU_RE = r"/doku.php/"
